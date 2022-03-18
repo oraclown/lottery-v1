@@ -2,7 +2,7 @@
 
 Lottery contract creator specifies the start and length time (start + interval) of the lottery.
 People can buy tickets to the lottery only during the interval period. After the interval time has elapsed,
-a lottery winner is chosen.
+a lottery winner is chosen, who can then claim their winnings.
 
 To buy tickets, people pay a couple [Dai](https://makerdao.com/en/) or some other pegged token.
 
@@ -26,7 +26,14 @@ From the above stackexchange link: `..the first letter is more influential than 
 
 Why a [simpler way](https://stackoverflow.com/questions/33809770/hash-function-that-can-return-a-integer-range-based-on-string) doesn't work? Not sure. Onwards.
 
-The `random_choice` algo I'll use first will probably just be `blockhash % num_ticket_buyers`.
+Because of more chats with @heavychain^, the `random_choice` algo I'll use first will probably just be `blockhash % num_ticket_buyers`.
+The blockhash is of a block number determined by the contract owner in the constructor. Once that block number has passed,
+ticket buyers can trigger the `declare_winner` and `give_winner_rewards` functions. The `declare_winner`
+function gets the block hash by calling a function of the Tellor oracle using the `BlockHash` query type query ID 
+given the current chain ID and block number set at contract creation. The blockhash value retrieved from
+Tellor oracle must have been reported long ago enough to allow for disputes and chain re-organizations.
+Both the `declare_winner` and `give_winner_rewards` functions can be called by anyone, and give the
+function caller a small reward, so that calling these functions is incentivised.
 
 That's it. Keep it simple and maybe improve in a later version...
 

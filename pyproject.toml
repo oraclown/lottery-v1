@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "lottery-v1"
+version = "0.1.0"
+description = ""
+authors = ["oraclown <owen.burton13@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "3.9.7"
+vyper = "^0.3.1"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

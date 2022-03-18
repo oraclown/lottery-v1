@@ -4,7 +4,7 @@ Lottery contract creator specifies the start and length time (start + interval) 
 People can buy tickets to the lottery only during the interval period. After the interval time has elapsed,
 a lottery winner is chosen.
 
-To buy tickets, people pay with a specified amount of a unique token. This token's is in `contracts/token.vy`. To make this token available to potential ticket-buyers, airdrop it to participants in the testnet run or put it on Uniswap somehow.
+To buy tickets, people pay a couple [Dai](https://makerdao.com/en/) or some other pegged token.
 
 To pick a winner, uniformly project a random seed evenly across a number of choices (ticket buyers). Lottery V1 will use the block hash after a certain time interval as the random seed. Security issues with this seed are discussed later. Not sure why, but [projecting the hash string directly results in an uneven distribution](https://stats.stackexchange.com/questions/26344/how-to-uniformly-project-a-hash-to-a-fixed-number-of-buckets), so the hash string must first be converted to a large number before moded. Python example:
 ```python
@@ -20,7 +20,15 @@ ticket_buyers = ["0xfakeaddr1..", "0xfakeaddr2", "0xfakeaddr3"]
 winner_idx = random_choice("fakeblockhashstr", len(ticket_buyers))
 print("winner", ticket_buyers[winner_idx])
 ```
+From the above stackexchange link: `..the first letter is more influential than the second..`
+
+^This might not apply because the distribution of characters within the block hash itself is random, so it doesn't matter if the characters near the beginning of the hash are more likely to influence the random choice. Could test this by making a plot of random choices and orders of characters in a hash string.
+
 Why a [simpler way](https://stackoverflow.com/questions/33809770/hash-function-that-can-return-a-integer-range-based-on-string) doesn't work? Not sure. Onwards.
 
+The `random_choice` algo I'll use first will probably just be `blockhash % num_ticket_buyers`.
+
 That's it. Keep it simple and maybe improve in a later version...
+
+Thanks @heavychain for all the help!
     

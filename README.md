@@ -1,10 +1,10 @@
 # Lottery V1
 
-Lottery contract creator specifies the start and length time (start + interval) of the lottery.
-People can buy tickets to the lottery only during the interval period. After the interval time has elapsed,
-a lottery winner is chosen, who can then claim their winnings.
+Lottery contract creator specifies the ticket buying period (start & end blocks) of the lottery.
+People can buy tickets to the lottery only during that window. After the interval time has elapsed,
+a lottery winner is chosen and the pot is given to the winner.
 
-To buy tickets, people pay a couple [Dai](https://makerdao.com/en/) or some other pegged token.
+To buy tickets, people pay some MATIC.
 
 To pick a winner, uniformly project a random seed evenly across a number of choices (ticket buyers). Lottery V1 will use the block hash after a certain time interval as the random seed. Security issues with this seed are discussed later. Not sure why, but [projecting the hash string directly results in an uneven distribution](https://stats.stackexchange.com/questions/26344/how-to-uniformly-project-a-hash-to-a-fixed-number-of-buckets), so the hash string must first be converted to a large number before moded. Python example:
 ```python

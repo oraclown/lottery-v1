@@ -2,16 +2,16 @@
 
 NUM_TICKETS: constant(uint256) = 10**6
 
-ticket_buyers: address[NUM_TICKETS]
-num_ticket_buyers: uint256
-winner: address
-winner_index: uint256
-winner_payout: uint256
-ticket_cost: uint256
-lottery_start: uint256
-lottery_end: uint256
-for_the_boyz: uint256 # a portion of total payout sent to admin
-admin: address
+ticket_buyers: public(address[NUM_TICKETS])
+num_ticket_buyers: public(uint256)
+winner: public(address)
+winner_index: public(uint256)
+winner_payout: public(uint256)
+ticket_cost: public(uint256)
+lottery_start: public(uint256)
+lottery_end: public(uint256)
+for_the_boyz: public(uint256) # a portion of total payout sent to admin
+admin: public(address)
 
 event TicketBought:
     amount: uint256

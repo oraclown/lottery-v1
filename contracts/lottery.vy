@@ -7,7 +7,7 @@ num_ticket_buyers: public(uint256)
 winner: public(address)
 winner_index: public(uint256)
 winner_payout: public(uint256)
-ticket_cost: public(uint256)
+ticket_price: public(uint256)
 lottery_start: public(uint256)
 lottery_end: public(uint256)
 for_the_boyz: public(uint256) # a portion of total payout sent to admin
@@ -25,7 +25,7 @@ event WinnerPaid:
 @external
 def __init__(
     _buy_period: uint256, # in seconds
-    _ticket_cost: uint256,
+    _ticket_price: uint256,
     _admin_fee: uint256,
 ):
     assert _buy_period >= 60*60, "buy period must be at least 1 hour"
@@ -34,7 +34,7 @@ def __init__(
 
     self.lottery_start = block.timestamp
     self.lottery_end = self.lottery_start + _buy_period
-    self.ticket_cost = _ticket_cost
+    self.ticket_price = _ticket_price
     self.for_the_boyz = _admin_fee
     self.admin = msg.sender
 
@@ -45,12 +45,12 @@ def buy_ticket():
     assert self.num_ticket_buyers < NUM_TICKETS, "no more tickets available"
     assert block.timestamp >= self.lottery_start, "lottery hasn't started"
     assert block.timestamp <= self.lottery_end, "lottery has ended"
-    assert msg.value >= self.ticket_cost, "purchase underpriced"
+    assert msg.value >= self.ticket_price, "purchase underpriced"
 
     self.ticket_buyers[self.num_ticket_buyers] = msg.sender
     self.num_ticket_buyers += 1
 
-    log TicketBought(self.ticket_cost, msg.sender)
+    log TicketBought(self.ticket_price, msg.sender)
 
 
 @external
@@ -62,17 +62,17 @@ def choose_winner():
     self.winner = self.ticket_buyers[self.winner_index]
 
     # Reward function caller
-    send(msg.sender, self.ticket_cost)
+    send(msg.sender, self.ticket_price)
 
 
 @external
 def pay_winner():
     assert self.winner != ZERO_ADDRESS, "choose_winner() must be called first"
 
-    self.winner_payout = self.balance * (1 - self.for_the_boyz / 100) - self.ticket_cost
+    self.winner_payout = self.balance * (1 - self.for_the_boyz / 100) - self.ticket_price
 
     send(self.winner, self.winner_payout)
-    send(self.admin, self.balance - self.ticket_cost)
+    send(self.admin, self.balance - self.ticket_price)
     send(msg.sender, self.balance)
 
     log WinnerPaid(self.winner_payout, self.winner)

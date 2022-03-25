@@ -80,3 +80,5 @@ def pay_winner():
 @external
 def num_tickets() -> uint256:
     return NUM_TICKETS
+
+# TODO: make getter for entire ticket_buyers array

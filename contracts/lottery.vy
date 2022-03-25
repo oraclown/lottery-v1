@@ -1,9 +1,9 @@
 # @version ^0.3.1
 
-NUM_TICKETS: constant(uint256) = 10**6
+NUM_TICKETS: constant(uint256) = 100
 
 ticket_buyers: public(address[NUM_TICKETS])
-num_ticket_buyers: public(uint256)
+tickets_bought: public(uint256)
 winner: public(address)
 winner_index: public(uint256)
 winner_payout: public(uint256)
@@ -42,13 +42,12 @@ def __init__(
 @external
 @payable
 def buy_ticket():
-    assert self.num_ticket_buyers < NUM_TICKETS, "no more tickets available"
-    assert block.timestamp >= self.lottery_start, "lottery hasn't started"
+    assert self.tickets_bought < NUM_TICKETS, "no more tickets available"
     assert block.timestamp <= self.lottery_end, "lottery has ended"
     assert msg.value >= self.ticket_price, "purchase underpriced"
 
-    self.ticket_buyers[self.num_ticket_buyers] = msg.sender
-    self.num_ticket_buyers += 1
+    self.ticket_buyers[self.tickets_bought] = msg.sender
+    self.tickets_bought += 1
 
     log TicketBought(self.ticket_price, msg.sender)
 
@@ -58,7 +57,7 @@ def choose_winner():
     assert block.timestamp > self.lottery_end, "lottery isn't over"
 
     # Choose winner
-    self.winner_index = convert(block.prevhash, uint256) % (self.num_ticket_buyers + 1)
+    self.winner_index = convert(block.prevhash, uint256) % (self.tickets_bought + 1)
     self.winner = self.ticket_buyers[self.winner_index]
 
     # Reward function caller
@@ -76,3 +75,8 @@ def pay_winner():
     send(msg.sender, self.balance)
 
     log WinnerPaid(self.winner_payout, self.winner)
+
+
+@external
+def num_tickets() -> uint256:
+    return NUM_TICKETS

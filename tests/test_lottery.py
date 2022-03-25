@@ -58,6 +58,8 @@ def test_buy_ticket_fail(lottery):
     # TODO: how to test when number of available tickets == 10**6?
     # because looping 10**6 times and buying a ticket each time takes forever
 
+    # TODO: test when lottery is over
+
 
 def test_choose_winner(lottery):
     pass

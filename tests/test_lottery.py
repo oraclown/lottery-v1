@@ -21,7 +21,10 @@ def test_deploy_lottery(lottery):
     assert lottery._name == "Lottery"
     assert lottery.balance() == 0
 
-    # TODO: write getter function for entire ticket_buyers array
+    ticket_buyers = lottery.get_ticket_buyers().return_value
+    num_tickets = lottery.num_tickets().return_value
+    assert num_tickets == 100
+    assert ticket_buyers == ("0x0000000000000000000000000000000000000000",) * num_tickets
     assert lottery.ticket_buyers(0) == EthAddress("0x0000000000000000000000000000000000000000")
     assert lottery.tickets_bought() == 0
     assert lottery.winner() == EthAddress("0x0000000000000000000000000000000000000000")

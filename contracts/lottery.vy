@@ -82,3 +82,6 @@ def num_tickets() -> uint256:
     return NUM_TICKETS
 
 # TODO: make getter for entire ticket_buyers array
+@external
+def get_ticket_buyers() -> address[NUM_TICKETS]:
+    return self.ticket_buyers

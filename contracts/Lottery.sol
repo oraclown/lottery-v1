@@ -15,7 +15,7 @@ contract Lottery {
 
     event ticketBought(address buyer, uint amount, uint ticketsBought);
     event winnerPicked(address winner, uint ticketsBought);
-    event winenrPaid(address winner, uint amount);
+    event winnerPaid(address winner, uint amount);
 
 
     constructor(
@@ -70,7 +70,7 @@ contract Lottery {
         uint winnerPayout = address(this).balance * (1 - forTheBoyz / 100) - ticketPrice;
         (bool sent1,) = winner.call{value: winnerPayout}("");
         require(sent1, "Failed to send reward to the winner");
-        emit winenrPaid(winner, winnerPayout);
+        emit winnerPaid(winner, winnerPayout);
 
         (bool sent2,) = admin.call{value: address(this).balance - ticketPrice}("");
         require(sent2, "Failed to send admin fee");

@@ -2,15 +2,15 @@
 pragma solidity >=0.8.13;
 
 contract Lottery {
-    uint256 maxTickets;
-    address[] ticketBuyers;
-    uint256 ticketsBought;
-    uint256 ticketPrice;
-    address winner;
-    uint256 lotteryStart;
-    uint256 lotteryEnd;
-    uint256 forTheBoyz;
-    address admin;
+    uint256 public maxTickets;
+    address[] public ticketBuyers;
+    uint256 public ticketsBought;
+    uint256 public ticketPrice;
+    address public winner;
+    uint256 public lotteryStart;
+    uint256 public lotteryEnd;
+    uint256 public forTheBoyz;
+    address public admin;
 
 
     event ticketBought(address buyer, uint amount, uint ticketsBought);
@@ -26,7 +26,7 @@ contract Lottery {
     ) {
         require(_maxTickets > 0, "Max tickets must be greater than 0");
         require(_ticketPrice > 0, "Ticket price must be greater than 0");
-        require(_buyPeriod > 60*60, "Buy period must be at least 1 hour");
+        require(_buyPeriod >= 60*60, "Buy period must be at least 1 hour");
         require(_adminFee >= 0, "Admin fee must be 0-100, representing 0-100%");
         require(_adminFee <= 100, "Admin fee must be 0-100, representing 0-100%");
         
@@ -35,6 +35,7 @@ contract Lottery {
         lotteryStart = block.timestamp;
         lotteryEnd = lotteryStart + _buyPeriod;
         forTheBoyz = _adminFee;
+        admin = msg.sender;
     }
 
 

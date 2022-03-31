@@ -8,7 +8,7 @@ import brownie
 @pytest.fixture(scope="module")
 def lottery(Lottery):
     # return accounts[0].deploy(Lottery, 60*60, 1, 1)
-    return Lottery.deploy(60*60, 1, 1, {"from": accounts[0]})
+    return Lottery.deploy(10**6, 1, 60*60, 1, {"from": accounts[0]})
 
     # get block at time of deployment
     # it will contain the timestamp at the time of deployment
@@ -21,19 +21,14 @@ def test_deploy_lottery(lottery):
     assert lottery._name == "Lottery"
     assert lottery.balance() == 0
 
-    ticket_buyers = lottery.get_ticket_buyers().return_value
-    num_tickets = lottery.num_tickets().return_value
-    assert num_tickets == 100
-    assert ticket_buyers == ("0x0000000000000000000000000000000000000000",) * num_tickets
-    assert lottery.ticket_buyers(0) == EthAddress("0x0000000000000000000000000000000000000000")
-    assert lottery.tickets_bought() == 0
+    assert lottery.maxTickets() == 10**6
+    assert lottery.getTicketBuyers() == []
+    assert lottery.ticketsBought() == 0
+    assert lottery.ticketPrice() == 1
     assert lottery.winner() == EthAddress("0x0000000000000000000000000000000000000000")
-    assert lottery.winner_index() == 0
-    assert lottery.winner_payout() == 0
-    assert lottery.ticket_price() == 1
-    assert abs(lottery.lottery_start()) - int(time()) < 1
-    assert lottery.lottery_end() == lottery.lottery_start() + 60*60
-    assert lottery.for_the_boyz() == 1
+    assert abs(lottery.lotteryStart()) - int(time()) < 1
+    assert lottery.lotteryEnd() == lottery.lotteryStart() + 60*60
+    assert lottery.forTheBoyz() == 1
     assert lottery.admin() == accounts[0]
 
 

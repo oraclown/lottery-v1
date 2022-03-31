@@ -8,7 +8,7 @@ import brownie
 @pytest.fixture(scope="module")
 def lottery(Lottery):
     # return accounts[0].deploy(Lottery, 60*60, 1, 1)
-    return Lottery.deploy(10**6, 1, 60*60, 1, {"from": accounts[0]})
+    return Lottery.deploy(10, 1, 60*60, 1, {"from": accounts[0]})
 
     # get block at time of deployment
     # it will contain the timestamp at the time of deployment
@@ -21,7 +21,7 @@ def test_deploy_lottery(lottery):
     assert lottery._name == "Lottery"
     assert lottery.balance() == 0
 
-    assert lottery.maxTickets() == 10**6
+    assert lottery.maxTickets() == 10
     assert lottery.getTicketBuyers() == []
     assert lottery.ticketsBought() == 0
     assert lottery.ticketPrice() == 1
@@ -33,25 +33,25 @@ def test_deploy_lottery(lottery):
 
 
 def test_buy_ticket(lottery):
-    lottery.buy_ticket({"from": accounts[1], "value": 1})
+    lottery.buyTicket({"from": accounts[1], "value": 1})
 
     assert accounts[1].balance() == 999999999999999999999
     assert lottery.balance() == 1
-    assert lottery.tickets_bought() == 1
-    assert lottery.ticket_buyers(0) == accounts[1]
+    assert lottery.ticketsBought() == 1
+    assert lottery.ticketBuyers(0) == accounts[1]
 
 
 def test_buy_ticket_fail(lottery):
     with brownie.reverts("purchase underpriced"):
-        lottery.buy_ticket({"from": accounts[1], "value": 0})
+        lottery.buyTicket({"from": accounts[1], "value": 0})
     
     # Buy all tickets so none left
     tickets_available = lottery.num_tickets({'from': accounts[1]}).return_value
     for i in range(tickets_available - lottery.tickets_bought()):
-        lottery.buy_ticket({"from": accounts[1], "value": 1})
+        lottery.buyTicket({"from": accounts[1], "value": 1})
     
     with brownie.reverts("no more tickets available"):
-        lottery.buy_ticket({"from": accounts[1], "value": 1})
+        lottery.buyTicket({"from": accounts[1], "value": 1})
     
     # TODO: how to test when number of available tickets == 10**6?
     # because looping 10**6 times and buying a ticket each time takes forever

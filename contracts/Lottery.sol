@@ -40,9 +40,9 @@ contract Lottery {
 
 
     function buyTicket() public payable {
-        require(block.timestamp <= lotteryEnd);
-        require(ticketsBought < maxTickets);
-        require(msg.value >= ticketPrice);
+        require(block.timestamp <= lotteryEnd, "Lottery is over");
+        require(ticketsBought < maxTickets, "No more tickets left");
+        require(msg.value >= ticketPrice, "Ticket purchase underpriced");
 
         ticketBuyers.push(msg.sender);
         ticketsBought++;

@@ -42,15 +42,16 @@ def test_buy_ticket(lottery):
 
 
 def test_buy_ticket_fail(lottery):
-    with brownie.reverts("purchase underpriced"):
+    print('start')
+    with brownie.reverts("Ticket purchase underpriced"):
         lottery.buyTicket({"from": accounts[1], "value": 0})
-    
+    print('here')
     # Buy all tickets so none left
-    tickets_available = lottery.num_tickets({'from': accounts[1]}).return_value
-    for i in range(tickets_available - lottery.tickets_bought()):
+    tickets_available = lottery.maxTickets() - lottery.ticketsBought()
+    for i in range(tickets_available):
         lottery.buyTicket({"from": accounts[1], "value": 1})
     
-    with brownie.reverts("no more tickets available"):
+    with brownie.reverts("No more tickets left"):
         lottery.buyTicket({"from": accounts[1], "value": 1})
     
     # TODO: how to test when number of available tickets == 10**6?

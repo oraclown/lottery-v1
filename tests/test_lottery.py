@@ -75,4 +75,5 @@ def test_pay_winner(lottery):
 
 
 def test_pay_winner_fail(lottery):
-    pass
+    with brownie.reverts("Choose winner first"):
+        lottery.payWinner({"from": accounts[0]})

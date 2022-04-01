@@ -41,6 +41,7 @@ def test_deploy_lottery(lottery):
     assert lottery.lotteryEnd() == lottery.lotteryStart() + LOTTERY_LENGTH
     assert lottery.forTheBoyz() == ADMIN_FEE
     assert lottery.admin() == accounts[0]
+    assert lottery.payWinnerCalled() == False
 
 
 def test_buy_ticket(lottery):
@@ -98,6 +99,7 @@ def test_choose_and_pay_winner(lottery):
     assert lottery.balance() == 0
     assert accounts[0].balance() == prev_balance + TICKET_PRICE*2 + GROSS_PAYOUT*ADMIN_FEE/100
     assert winner_balance >= min_balance + GROSS_PAYOUT - accounts[0].balance()
+    assert lottery.payWinnerCalled() == True
 
 
 def test_choose_winner_fail(lottery):

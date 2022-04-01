@@ -52,7 +52,7 @@ contract Lottery {
 
 
     function chooseWinner() public {
-        require(block.timestamp > lotteryEnd);
+        require(block.timestamp > lotteryEnd, "Lottery not over");
 
         uint winnerIndex = uint(blockhash(block.number - 1)) % (ticketsBought + 1);
         winner = ticketBuyers[winnerIndex];
@@ -65,7 +65,7 @@ contract Lottery {
 
 
     function payWinner() public {
-        require(winner != address(0));
+        require(winner != address(0), "Choose winner first");
 
         uint winnerPayout = address(this).balance * (1 - forTheBoyz / 100) - ticketPrice;
         (bool sent1,) = winner.call{value: winnerPayout}("");

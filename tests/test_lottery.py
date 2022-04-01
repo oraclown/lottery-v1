@@ -2,13 +2,14 @@ import pytest
 from brownie import accounts, chain
 from time import time
 from brownie.convert import EthAddress
+from brownie.convert.datatypes import Wei
 import brownie
 import random
 
 
 LOTTERY_LENGTH = 60*60 # 1 hour
-MAX_TICKETS = 10
-TICKET_PRICE = 1
+MAX_TICKETS = 13
+TICKET_PRICE = 3
 ADMIN_FEE = 1
 GROSS_PAYOUT = MAX_TICKETS*TICKET_PRICE
 
@@ -45,7 +46,7 @@ def test_deploy_lottery(lottery):
 def test_buy_ticket(lottery):
     lottery.buyTicket({"from": accounts[1], "value": TICKET_PRICE})
 
-    assert accounts[1].balance() == 999999999999999999999
+    assert accounts[1].balance() == Wei("1000 ether") - TICKET_PRICE
     assert lottery.balance() == TICKET_PRICE
     assert lottery.ticketsBought() == 1
     assert lottery.ticketBuyers(0) == accounts[1]
@@ -72,14 +73,14 @@ def test_buy_ticket_fail(lottery):
 
 def test_choose_and_pay_winner(lottery):
     # Buy all tickets with random accounts
-    for i in range(lottery.maxTickets()):
+    for i in range(MAX_TICKETS):
         lottery.buyTicket({"from": accounts[random.randint(1, 9)], "value": TICKET_PRICE})
     min_balance = min([account.balance() for account in accounts])
 
-    assert lottery.balance() == lottery.maxTickets()
-    assert lottery.ticketsBought() == lottery.maxTickets()
+    assert lottery.balance() == MAX_TICKETS * TICKET_PRICE
+    assert lottery.ticketsBought() == MAX_TICKETS
     for buyer in lottery.getTicketBuyers():
-        assert find_account(buyer).balance() < 1000000000000000000000
+        assert find_account(buyer).balance() < Wei("1000 ether")
         assert buyer != EthAddress("0x0000000000000000000000000000000000000000")
 
     # Choose winner
@@ -95,8 +96,8 @@ def test_choose_and_pay_winner(lottery):
     winner_balance = find_account(lottery.winner()).balance()
 
     assert lottery.balance() == 0
-    assert accounts[0].balance() == prev_balance + lottery.ticketPrice()*2 + GROSS_PAYOUT*ADMIN_FEE/100
-    assert winner_balance > min_balance + GROSS_PAYOUT - accounts[0].balance()
+    assert accounts[0].balance() == prev_balance + TICKET_PRICE*2 + GROSS_PAYOUT*ADMIN_FEE/100
+    assert winner_balance >= min_balance + GROSS_PAYOUT - accounts[0].balance()
 
 
 def test_choose_winner_fail(lottery):

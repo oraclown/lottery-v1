@@ -53,19 +53,20 @@ contract Lottery {
 
     function chooseWinner() public {
         require(block.timestamp > lotteryEnd, "Lottery not over");
+        require(winner == address(0), "Winner already picked");
 
         uint winnerIndex = uint(blockhash(block.number - 1)) % (ticketsBought + 1);
         winner = ticketBuyers[winnerIndex];
+        emit winnerPicked(winner, ticketsBought);
 
         (bool sent,) = msg.sender.call{value: ticketPrice}("");
         require(sent, "Failed to send reward for choosing the winner");
-
-        emit winnerPicked(winner, ticketsBought);
     }
 
 
     function payWinner() public {
         require(winner != address(0), "Choose winner first");
+        require(address(this).balance == ticketsBought * ticketPrice - ticketPrice, "Payouts already delivered");
 
         uint winnerPayout = address(this).balance * (1 - forTheBoyz / 100) - ticketPrice;
         (bool sent1,) = winner.call{value: winnerPayout}("");

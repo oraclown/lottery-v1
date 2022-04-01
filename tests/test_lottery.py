@@ -7,7 +7,8 @@ import brownie
 
 LOTTERY_LENGTH = 60*60 # 1 hour
 
-@pytest.fixture(scope="module")
+
+@pytest.fixture(scope="function")
 def lottery(Lottery):
     return Lottery.deploy(10, 1, LOTTERY_LENGTH, 1, {"from": accounts[0]})
 
@@ -65,7 +66,8 @@ def test_choose_winner(lottery):
 
 
 def test_choose_winner_fail(lottery):
-    pass
+    with brownie.reverts("Lottery not over"):
+        lottery.chooseWinner({"from": accounts[0]})
 
 
 def test_pay_winner(lottery):

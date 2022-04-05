@@ -110,3 +110,11 @@ def test_choose_winner_fail(lottery):
 def test_pay_winner_fail(lottery):
     with brownie.reverts("Choose winner first"):
         lottery.payWinner({"from": accounts[0]})
+
+
+def test_donate_to_lottery(lottery):
+    prev_balance = accounts[0].balance()
+    accounts[0].transfer(lottery, "1 ether")
+
+    assert lottery.balance() == Wei("1 ether")
+    assert accounts[0].balance() == prev_balance - Wei("1 ether")

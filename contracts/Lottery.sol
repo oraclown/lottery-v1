@@ -17,6 +17,7 @@ contract Lottery {
     event ticketBought(address buyer, uint amount, uint ticketsBought);
     event winnerPicked(address winner, uint ticketsBought);
     event winnerPaid(address winner, uint amount);
+    event donation(address doner, uint amount);
 
 
     constructor(
@@ -88,4 +89,10 @@ contract Lottery {
     function getTicketBuyers() public view returns (address[] memory) {
         return ticketBuyers;
     }
+
+    receive() external payable {
+        // Anyone can donate to the pot
+        emit donation(msg.sender, msg.value);
+    }
+
 }

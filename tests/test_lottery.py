@@ -22,14 +22,14 @@ def find_account(address):
 
 
 @pytest.fixture(scope="function")
-def lottery(Lottery):
-    return Lottery.deploy(MAX_TICKETS, TICKET_PRICE, LOTTERY_LENGTH, ADMIN_FEE, {"from": accounts[0]})
+def lottery(LotteryV1):
+    return LotteryV1.deploy(MAX_TICKETS, TICKET_PRICE, LOTTERY_LENGTH, ADMIN_FEE, {"from": accounts[0]})
 
 
 def test_deploy_lottery(lottery):
     assert lottery.address != None
     assert lottery._owner == accounts[0]
-    assert lottery._name == "Lottery"
+    assert lottery._name == "LotteryV1"
     assert lottery.balance() == 0
 
     assert lottery.maxTickets() == MAX_TICKETS

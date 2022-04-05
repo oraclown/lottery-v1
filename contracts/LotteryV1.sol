@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.13;
 
-contract Lottery {
+contract LotteryV1 {
     uint256 public maxTickets;
     address[] public ticketBuyers;
     uint256 public ticketsBought;

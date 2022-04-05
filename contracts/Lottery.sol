@@ -11,6 +11,7 @@ contract Lottery {
     uint256 public lotteryEnd;
     uint256 public forTheBoyz;
     address public admin;
+    bool public payWinnerCalled;
 
 
     event ticketBought(address buyer, uint amount, uint ticketsBought);
@@ -53,6 +54,7 @@ contract Lottery {
 
     function chooseWinner() public {
         require(block.timestamp > lotteryEnd, "Lottery not over");
+        require(winner == address(0), "Winner already picked");
 
         uint winnerIndex = uint(blockhash(block.number - 1)) % (ticketsBought + 1);
         winner = ticketBuyers[winnerIndex];
@@ -66,17 +68,20 @@ contract Lottery {
 
     function payWinner() public {
         require(winner != address(0), "Choose winner first");
+        require(payWinnerCalled == false, "Function already called");
 
+        payWinnerCalled = true;
         uint winnerPayout = address(this).balance * (1 - forTheBoyz / 100) - ticketPrice;
         (bool sent1,) = winner.call{value: winnerPayout}("");
         require(sent1, "Failed to send reward to the winner");
-        emit winnerPaid(winner, winnerPayout);
 
         (bool sent2,) = admin.call{value: address(this).balance - ticketPrice}("");
         require(sent2, "Failed to send admin fee");
 
         (bool sent3,) = msg.sender.call{value: address(this).balance}("");
         require(sent3, "Failed to send reward for function caller");
+
+        emit winnerPaid(winner, winnerPayout);
     }
 
 

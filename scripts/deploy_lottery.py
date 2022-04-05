@@ -4,7 +4,7 @@ Deploy Lottery contract
 $ brownie run deploy_lottery.py --network ropsten
 
 Deployed on Polygon Mumbai testnet:
-https://mumbai.polygonscan.com/address/0x6cBa90fFcbA80d30D52798Be8C26e7236bA49322
+https://mumbai.polygonscan.com/address/0x25aE8Bca4859c4564bfa8713AD1cd1865f240CA7#code
 """
 from brownie import accounts, LotteryV1
 from brownie.convert.datatypes import Wei
